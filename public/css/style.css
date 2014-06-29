@@ -1,0 +1,55 @@
+table { 
+	border-spacing:0px;
+}
+
+td {
+	padding:0px;
+	margin:0px;
+}
+
+.orb {
+	width: 53px;
+	height: 53px;
+}
+
+.fire {
+	background: url('../assets/sprites.png') no-repeat -2px -2px;
+}
+
+.water {
+	background: url('../assets/sprites.png') no-repeat -2px -59px;
+}
+
+.wood {
+	background: url('../assets/sprites.png') no-repeat -2px -117px;
+}
+
+.light {
+	background: url('../assets/sprites.png') no-repeat -1px -175px;
+}
+
+.dark {
+	background: url('../assets/sprites.png') no-repeat -1px -233px;
+}
+
+.unselected {
+	background: url('../assets/sprites.png') no-repeat -2px -467px;
+}
+
+.heal {
+	background: url('../assets/sprites.png') no-repeat -3px -294px;
+	width: 52px;
+	height: 49px;
+}
+
+.bg_0 {
+	background: url('../assets/sprites.png') no-repeat -3px -351px;
+	width: 53px;
+	height: 53px;
+}
+
+.bg_1 {
+	background: url('../assets/sprites.png') no-repeat -3px -409px;
+	width: 53px;
+	height: 53px;
+}
