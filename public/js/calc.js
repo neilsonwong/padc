@@ -41,7 +41,7 @@
 				if (v[j]>2){
 					var oldColour = b[24+j];	//start from last row and increment the position
 					var vGrp=[];
-					for (var i=v[j]; i>0; --i){ vGrp.push(p-i*6); }
+					for (var i=v[j]; i>0; --i){ vGrp.push(p-i*6+j); }
 					addGroup(oldColour, vGrp);
 				}	
 			}
