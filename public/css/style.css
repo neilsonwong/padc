@@ -32,7 +32,7 @@ td {
 	background: url('../assets/sprites.png') no-repeat -1px -233px;
 }
 
-.unselected {
+.unknown {
 	background: url('../assets/sprites.png') no-repeat -2px -467px;
 }
 
@@ -52,4 +52,50 @@ td {
 	background: url('../assets/sprites.png') no-repeat -3px -409px;
 	width: 53px;
 	height: 53px;
+}
+
+
+/* Editor css styles */
+
+.unselected {
+	opacity:0.3;
+}
+
+/* Pulse */		/* modified from hover.css */
+@-webkit-keyframes pulse {
+  25% {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+
+  75% {
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+}
+
+@keyframes pulse {
+  25% {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+
+  75% {
+    -webkit-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+}
+
+.selected {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  -webkit-animation-name: pulse;
+  animation-name: pulse;
+  -webkit-animation-duration: 1.2s;
+  animation-duration: 1.2s;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
 }
