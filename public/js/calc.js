@@ -52,11 +52,12 @@
 
 		var r,c; var p=0;
 		var groups={ 0:[], 1:[], 2:[], 3:[], 4:[], 5:[], combo:0 };
-		var curGroup=[];
+		var curGroup;
 		var curColour;
 		var pv;
 		var v=[1,1,1,1,1,1];
 		for (r=0; r<5; ++r){
+			curGroup=[];
 			for (c=0; c<6; ++c, ++p){
 				//move horizontally through the row to get horizontal matches of min 3
 				if (curColour==b[p]){	//if current colour matches current orb
