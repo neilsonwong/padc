@@ -1,7 +1,23 @@
 function Board(){
 	this.vals = loadPresetBoard();
 	this.make();
-	this.watch("vals", update);
+	this.watch("vals", this.update);
+
+
+	function loadPresetBoard(){
+		var a = $.getUrlVar('board');
+		var boardVals = null;
+		try {
+			boardVals = a ? JSON.parse(a) : undefined; a=null;
+		}
+		catch (e) {
+			$body.append('Opps something went wrong!');
+		}
+
+		//set board to unselected if no preset
+		if (!boardVals){ boardVals=[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]; }
+		return boardVals;
+	}
 }
 
 //members
@@ -43,23 +59,14 @@ Board.prototype.make = function (b){
 	this.$table = $t;
 }
 
-function update(id, oldVal, newVal){
+Board.prototype.update = function(id, oldVal, newVal){
 	console.log('update table values');
 	this.make(newVal);
-	render();
+	this.render();
 }
 
-function loadPresetBoard(){
-	var a = $.getUrlVar('board');
-	var boardVals = null;
-	try {
-		boardVals = a ? JSON.parse(a) : undefined; a=null;
-	}
-	catch (e) {
-		$body.append('Opps something went wrong!');
-	}
-
-	//set board to unselected if no preset
-	if (!boardVals){ boardVals=[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]; }
-	return boardVals;
+Board.prototype.render = function(){
+	//to rerender all we need to do is delete our current object from the DOM
+	//add our new one
+	$('#board').replaceWith(this.$table);
 }
