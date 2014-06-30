@@ -1,4 +1,4 @@
 render();
-combos = getCombos(boardVals);
+combos = getCombos($board.vals);
 console.log(combos.combo);
 console.log(combos);

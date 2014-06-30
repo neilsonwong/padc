@@ -1,55 +1,48 @@
 //this js generates the page
 
 
-var $cells = {};
-var boardVals;
-
 //declare functions
 
-//get GET Params
-$.extend({getUrlVars:function(){for(var b,a=[],c=window.location.href.slice(window.location.href.indexOf("?")+1).split("&"),d=0;d<c.length;d++)b=c[d].split("="),a.push(b[0]),a[b[0]]=b[1];return a},getUrlVar:function(a){return $.getUrlVars()[a]}});
 
-//generate the table cells
-function makeBoard() {
-	//set board to unselected if no preset
-	if (!boardVals){ boardVals=[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]; }
+// function makeMadoka(){
+// 	var $share = $('<div>');
+// 	var $shorten = $('<button>', { text: 'Share' })
+// 		.addClass('btn')
+// 		.click(homurachan);
+// 	var $homura = $('<input>', { value: baseURL+'?board='+JSON.stringify(boardVals) })
+// 		.addClass('hidden');
+// 	var $godoka = $('<input>', { value: baseURL+'?hash='+JSON.stringify(boardVals).hashCode()})
+// 		.addClass('hidden');
+// 		// .focus(function(event){ $(this).select(); });
+// 	$share.append($shorten)
+// 		.append($homura)
+// 		.append($godoka);
+// 	return $share;
+// }
 
-	var boardBGs = {	0:'bg_0', 
-						1:'bg_1' };
 
-	var orbSprites = {	0:'fire',
-						1:'water',
-						2:'wood',
-						3:'light',
-						4:'dark',
-						5:'heal',
-						6:'unselected' };
-
-	for (var i=0; i < 5;++i){
-		var $row = $('<tr>');
-		var $populator = {};
-		for (var j=0; j < 6; ++j){
-			var bgClass=boardBGs[((i%2)+(j%2)+1)%2];	//calculate the bg class
-			var orbClass=orbSprites[boardVals[6*i+j]];
-			var $orb = $('<div>').addClass('orb').addClass(orbClass);
-			var $cell = $('<td>')
-				.addClass(bgClass)
-				.append($orb);
-			$populator[j] = $cell;
-			$row.append($cell);
-		}
-		$cells[i] = $populator;
-		$board.append($row);
-	}
-}
 
 //declare global elements
+//part of web page
 var $body = $('body');
-var a = $.getUrlVar('board');
-boardVals = a ? JSON.parse(a) : undefined; a=null;
-var $board = $('<table>', {id: 'board'}); makeBoard();
+var baseURL = [location.protocol, '//', location.host, location.pathname].join('');
+
+//layout elements
+var $board = new Board();
+// var $madoka = makeMadoka();
+
+//main layout
+// var $D2 = $('<div>').append($madoka);
+var $D1;
 
 //add board to body
 function render() {
-	$body.append($board);
+	//clear body
+	$body.html('');
+
+	//update content values
+	 $D1 = $('<div>').append($board.$table);
+
+	//render content
+	$body.append($D1);
 }
