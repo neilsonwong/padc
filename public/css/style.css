@@ -99,3 +99,7 @@ td {
   -webkit-animation-iteration-count: infinite;
   animation-iteration-count: infinite;
 }
+
+#board_editor > li {
+	list-style: none;
+}

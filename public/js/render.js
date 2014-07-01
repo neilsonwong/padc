@@ -21,21 +21,8 @@
 // }
 
 function makeEditor(){
-	//orb selection panel
-	var $panel = $('<ul>', {id:'board_editor'});
-	var $orb0 = $('<li>').addClass('orb').addClass('fire');
-	var $orb1 = $('<li>').addClass('orb').addClass('water');
-	var $orb2 = $('<li>').addClass('orb').addClass('wood');
-	var $orb3 = $('<li>').addClass('orb').addClass('light');
-	var $orb4 = $('<li>').addClass('orb').addClass('dark');
-	var $orb5 = $('<li>').addClass('orb').addClass('heal');
 
-	$panel.append($orb0)
-	.append($orb1)
-	.append($orb2)
-	.append($orb3)
-	.append($orb4)
-	.append($orb5);
+
 }
 
 
@@ -58,7 +45,8 @@ function render() {
 	$body.html('');
 
 	//update content values
-	 $D1 = $('<div>').append($board.$table);
+	 $D1 = $('<div>').append($board.$table)
+	 .append($board.editor.$panel);
 
 	//render content
 	$body.append($D1);
