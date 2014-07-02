@@ -1,8 +1,8 @@
 function Board(){
+	var self = this;
 	this.vals = loadPresetBoard();
 	this.make();
 	this.editor = new Editor();
-	watch(this, "vals", this.update);
 
 
 	function loadPresetBoard(){
@@ -19,6 +19,14 @@ function Board(){
 		if (!boardVals){ boardVals=[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]; }
 		return boardVals;
 	}
+
+
+	var update = function(id, action, newVal, oldVal){
+		console.log('update table values');
+		self.render(newVal);
+	}
+
+	watch(this, "vals", update);
 }
 
 //members
@@ -62,21 +70,38 @@ Board.prototype.make = function (b){
 	this.$table = $t;
 }
 
-Board.prototype.update = function(id, action, newVal, oldVal){
-	console.log('update table values');
-	this.make(newVal);
-	this.render();
-}
 
-Board.prototype.render = function(){
+Board.prototype.render = function(newVals){
 	//to rerender all we need to do is delete our current object from the DOM
 	//add our new one
-	$('#board').replaceWith(this.$table);
+	var self = this;
+	if (newVals){
+		$('#board .orb').each(function(i, element){
+			//careful context of this changed ! :O
+			var $gem = $(element);
+			$gem.removeClass('fire water wood dark light heal unknown')
+			.addClass(self.orbSprites[self.vals[i]]);
+		});
+	}
 }
 
 function Editor(){
 	this.make();
-	watch(this, "curOrb", this.activateOrb);
+
+	var activateOrb = function (id, action, newVal, oldVal){
+		var $oldOrb = $(this.$orbs.get(oldVal));
+		var $newOrb = $(this.$orbs.get(newVal));
+
+		if (newVal != null){
+			if ($oldOrb.length == 1){ //orb exists
+				$oldOrb.toggleClass('selected unselected');
+			}
+			$newOrb.toggleClass('selected unselected');
+		}
+	}
+
+
+	watch(this, "curOrb", activateOrb);
 }
 
 Editor.prototype.$panel = null;
@@ -84,32 +109,22 @@ Editor.prototype.active = false;
 Editor.prototype.curOrb = 'wtf';
 Editor.prototype.buffer = [];
 
-Editor.prototype.activateOrb = function(id, action, newVal, oldVal){
-	var $oldOrb = $(this.$orbs.get(oldVal));
-	var $newOrb = $(this.$orbs.get(newVal));
-
-	if (newVal != null){
-		if ($oldOrb.length == 1){ //orb exists
-			$oldOrb.toggleClass('selected unselected');
-		}
-		$newOrb.toggleClass('selected unselected');
-	}
-}
 
 Editor.prototype.editOrb = function(event){
 	if (!this.active){ return null; }
 
-	//colour to add
+	// //colour to add
 	var colour = event.currentTarget.className.replace('orb', '').trim();
 
-	//get our current orb
-	var $gem = $(this.$orbs.get(this.curOrb));
-	$gem.removeClass('fire water wood dark light heal unknown')
-	.addClass(colour);
+	// //get our current orb
+	// var $gem = $(this.$orbs.get(this.curOrb));
+	// $gem.removeClass('fire water wood dark light heal unknown')
+	// .addClass(colour);
 
 	//modify the vars from board
-	this.buffer[this.curOrb] = sagashi($board.orbSprites, colour);
+	// this.buffer[this.curOrb] = sagashi($board.orbSprites, colour);
 
+	$board.vals[this.curOrb] = sagashi($board.orbSprites, colour);
 	this.curOrb = this.curOrb + 1;		//can't use ++ cuz it screws wiht the watch
 }
 

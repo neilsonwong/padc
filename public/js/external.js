@@ -9,20 +9,29 @@ var sagashi = function(array, p1, p2) {
 	if (p2){
 		var attr = p1;
 		var value = p2;
-	    for(var i = 0; i < array.length; i += 1) {
+	    for(var i = 0; i < Object.size(array); i += 1) {
 	        if(array[i][attr] === value) {
 	            return i;
 	        }
 	    }
 	}
 	else {
-	    for(var i = 0; i < array.length; i += 1) {
+		var value = p1;
+	    for(var i = 0; i < Object.size(array); i += 1) {
 	        if(array[i] === value) {
 	            return i;
 	        }
 	    }
 	}
 }
+
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
 
 /**
  * DEVELOPED BY
