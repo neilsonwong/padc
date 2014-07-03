@@ -1,8 +1,22 @@
+
+//Constants vars
+function pazudora() { 
+	//empty for now
+}
+
+pazudora.orbSprites = {	0:'fire',
+				1:'water',
+				2:'wood',
+				3:'light',
+				4:'dark',
+				5:'heal',
+				6:'unknown' };
+
 function Board(){
 	var self = this;
 	this.vals = loadPresetBoard();
 	this.make();
-	this.editor = new Editor();
+	this.editor = new Editor(this);
 
 
 	function loadPresetBoard(){
@@ -33,13 +47,6 @@ function Board(){
 Board.prototype.vals = {};
 Board.prototype.$table = null;
 Board.prototype.editor = {};
-Board.prototype.orbSprites = {	0:'fire',
-								1:'water',
-								2:'wood',
-								3:'light',
-								4:'dark',
-								5:'heal',
-								6:'unknown' };
 
 Board.prototype.boardBGs = {0:'bg_0', 
 							1:'bg_1' };
@@ -48,7 +55,7 @@ Board.prototype.boardBGs = {0:'bg_0',
 Board.prototype.make = function (b){
 	var $t = $('<table>', {id: 'board'});
 	var boardVals = b ? b : this.vals;
-	var orbSprites = this.orbSprites;
+	var orbSprites = pazudora.orbSprites;
 	var boardBGs = this.boardBGs;
 
 
@@ -57,7 +64,7 @@ Board.prototype.make = function (b){
 		var $populator = {};
 		for (var j=0; j < 6; ++j){
 			var bgClass=boardBGs[((i%2)+(j%2)+1)%2];	//calculate the bg class
-			var orbClass=orbSprites[boardVals[6*i+j]] ? orbSprites[boardVals[6*i+j]] : orbSprites[6];
+			var orbClass=pazudora.orbSprites[boardVals[6*i+j]] ? orbSprites[boardVals[6*i+j]] : orbSprites[6];
 			var $orb = $('<div>').addClass('orb').addClass(orbClass);
 			var $cell = $('<td>')
 				.addClass(bgClass)
@@ -70,27 +77,34 @@ Board.prototype.make = function (b){
 	this.$table = $t;
 }
 
-
 Board.prototype.render = function(newVals){
 	//to rerender all we need to do is delete our current object from the DOM
 	//add our new one
 	var self = this;
-	if (newVals){
+	if (newVals != null){
 		$('#board .orb').each(function(i, element){
 			//careful context of this changed ! :O
 			var $gem = $(element);
 			$gem.removeClass('fire water wood dark light heal unknown')
-			.addClass(self.orbSprites[self.vals[i]]);
+			.addClass(pazudora.orbSprites[self.vals[i]]);
 		});
 	}
 }
 
-function Editor(){
+function Editor(parent){
+	this.mommy = parent;
+	var self = this;
 	this.make();
 
 	var activateOrb = function (id, action, newVal, oldVal){
 		var $oldOrb = $(this.$orbs.get(oldVal));
 		var $newOrb = $(this.$orbs.get(newVal));
+		if ($newOrb.length == 0){
+			//no more orbs to match
+			WatchJS.noMore = true; //prevent invoking watcher in this scope
+			//reset the orb to the last orb
+			this.curOrb = this.$orbs.length-1;
+		}
 
 		if (newVal != null){
 			if ($oldOrb.length == 1){ //orb exists
@@ -108,6 +122,7 @@ Editor.prototype.$panel = null;
 Editor.prototype.active = false;
 Editor.prototype.curOrb = 'wtf';
 Editor.prototype.buffer = [];
+Editor.prototype.mommy = null;
 
 
 Editor.prototype.editOrb = function(event){
@@ -124,37 +139,56 @@ Editor.prototype.editOrb = function(event){
 	//modify the vars from board
 	// this.buffer[this.curOrb] = sagashi($board.orbSprites, colour);
 
-	$board.vals[this.curOrb] = sagashi($board.orbSprites, colour);
-	this.curOrb = this.curOrb + 1;		//can't use ++ cuz it screws wiht the watch
+	$board.vals[this.curOrb] = sagashi(pazudora.orbSprites, colour);
+	++this.curOrb;		//can't use ++ cuz it screws wiht the watch
 }
 
 Editor.prototype.make = function(){
-	//orb selection panel
-	var $panel = $('<ul>', {id:'board_editor'});
-	var $orb0 = $('<li>').addClass('orb').addClass('fire').on('click', this.editOrb.bind(this));
-	var $orb1 = $('<li>').addClass('orb').addClass('water').on('click', this.editOrb.bind(this));
-	var $orb2 = $('<li>').addClass('orb').addClass('wood').on('click', this.editOrb.bind(this));
-	var $orb3 = $('<li>').addClass('orb').addClass('light').on('click', this.editOrb.bind(this));
-	var $orb4 = $('<li>').addClass('orb').addClass('dark').on('click', this.editOrb.bind(this));
-	var $orb5 = $('<li>').addClass('orb').addClass('heal').on('click', this.editOrb.bind(this));
+	var self = this;
 
 	var $onOffSwitch = $('<button>', {text:'Edit'})
 	.on('click', this.edit.bind(this));
 
-	$panel.append($onOffSwitch)
-	.append($orb0)
-	.append($orb1)
-	.append($orb2)
-	.append($orb3)
-	.append($orb4)
-	.append($orb5);
+	//we also need to glue a callback function onto the orbs from our board :P
+	function poke(event){
+		//load orbs
+		if (!self.$orbs){
+			self.$orbs = self.mommy.$table.find('.orb');
+		}
+
+		//when we are clicked change the edit mode
+		if (!self.active){
+			$onOffSwitch.click();
+		}
+
+		//set edit styles	
+		var index = self.$orbs.index(event.currentTarget);
+		self.curOrb = index;
+	};
+
+	this.mommy.$table.find('.orb').click(poke);
+
+	//orb selection panel
+	var $panel = $('<ul>', {id:'board_editor'});
+	var $panelOrbs = [];
+	for (var i=0; i<6;++i){
+		var orbClass = pazudora.orbSprites[i];
+		var $orb = $('<li>').addClass('orb').addClass(orbClass).on('click', this.editOrb.bind(this));
+		$panelOrbs.push($orb);
+	}
+
+	$panel.append($onOffSwitch);
+	for (var i=0;i<$panelOrbs.length;++i){
+		$panel.append($panelOrbs[i]);
+	}
 
 	this.$panel = $panel;
+
 }
 
 Editor.prototype.edit = function(event){
 	//load orbs
-	this.$orbs = $('#board').find('.orb');
+	this.$orbs = this.mommy.$table.find('.orb');
 
 	//toggle active
 	this.active = !this.active;
@@ -167,9 +201,6 @@ Editor.prototype.edit = function(event){
 	else {		//edit mode off
 		this.$orbs.removeClass('unselected selected');
 		this.curOrb = null;
-
-		//push the changes into real board buffer
-		$board.vals = this.buffer;
 	}
 }
 
