@@ -101,7 +101,6 @@ function Editor(parent){
 		var $newOrb = $(this.$orbs.get(newVal));
 		if ($newOrb.length == 0){
 			//no more orbs to match
-			WatchJS.noMore = true; //prevent invoking watcher in this scope
 			//reset the orb to the last orb
 			this.curOrb = this.$orbs.length-1;
 		}
