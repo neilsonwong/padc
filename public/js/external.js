@@ -3,35 +3,25 @@ $.extend({getUrlVars:function(){for(var b,a=[],c=window.location.href.slice(wind
 //hash function
 String.prototype.hashCode=function(){var b,c,d,a=0;if(0==this.length)return a;for(b=0,d=this.length;d>b;b++)c=this.charCodeAt(b),a=(a<<5)-a+c,a|=0;return a};
 
+//find in associative array function
+var sagashi = function(array, value) {
+	var s = getSize(array);
+    for(var i = 0; i < s; ++i) {
+        if(array[i] === value) {
+            return i;
+        }
+    }
+	function getSize(obj) {
+	    var size = 0, key;
+	    for (key in obj) {
+	        if (obj.hasOwnProperty(key)) size++;
+	    }
+	    return size;
+	};
 
-//find in array function
-var sagashi = function(array, p1, p2) {
-	if (p2){
-		var attr = p1;
-		var value = p2;
-	    for(var i = 0; i < Object.size(array); i += 1) {
-	        if(array[i][attr] === value) {
-	            return i;
-	        }
-	    }
-	}
-	else {
-		var value = p1;
-	    for(var i = 0; i < Object.size(array); i += 1) {
-	        if(array[i] === value) {
-	            return i;
-	        }
-	    }
-	}
 }
 
-Object.size = function(obj) {
-    var size = 0, key;
-    for (key in obj) {
-        if (obj.hasOwnProperty(key)) size++;
-    }
-    return size;
-};
+
 
 /**
  * DEVELOPED BY

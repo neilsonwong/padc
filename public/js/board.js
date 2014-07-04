@@ -1,16 +1,5 @@
-
-//Constants vars
-function pazudora() { 
-	//empty for now
-}
-
-pazudora.orbSprites = {	0:'fire',
-				1:'water',
-				2:'wood',
-				3:'light',
-				4:'dark',
-				5:'heal',
-				6:'unknown' };
+//board.js
+//all the functions involving board creation and interactions
 
 function Board(){
 	var self = this;
@@ -26,11 +15,12 @@ function Board(){
 			boardVals = a ? JSON.parse(a) : undefined; a=null;
 		}
 		catch (e) {
-			$body.append('Opps something went wrong!');
+			console.log('Invalid parameters passed to page');
+			console.log(e);
 		}
 
 		//set board to unselected if no preset
-		if (!boardVals){ boardVals=[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6]; }
+		if (!boardVals){  }
 		return boardVals;
 	}
 
@@ -43,20 +33,21 @@ function Board(){
 	watch(this, "vals", update);
 }
 
+Board.boardBGs = {0:'bg_0', 
+							1:'bg_1' };
+Board.defaultBoard=[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6];
+
 //members
-Board.prototype.vals = {};
+Board.prototype.vals = Board.defaultBoard;
 Board.prototype.$table = null;
 Board.prototype.editor = {};
-
-Board.prototype.boardBGs = {0:'bg_0', 
-							1:'bg_1' };
 
 //generate table cells
 Board.prototype.make = function (b){
 	var $t = $('<table>', {id: 'board'});
 	var boardVals = b ? b : this.vals;
-	var orbSprites = pazudora.orbSprites;
-	var boardBGs = this.boardBGs;
+	var orbSprites = Pazudora.orbSprites;
+	var boardBGs = Board.boardBGs;
 
 
 	for (var i=0; i < 5;++i){
@@ -64,7 +55,7 @@ Board.prototype.make = function (b){
 		var $populator = {};
 		for (var j=0; j < 6; ++j){
 			var bgClass=boardBGs[((i%2)+(j%2)+1)%2];	//calculate the bg class
-			var orbClass=pazudora.orbSprites[boardVals[6*i+j]] ? orbSprites[boardVals[6*i+j]] : orbSprites[6];
+			var orbClass=Pazudora.orbSprites[boardVals[6*i+j]] ? orbSprites[boardVals[6*i+j]] : orbSprites[6];
 			var $orb = $('<div>').addClass('orb').addClass(orbClass);
 			var $cell = $('<td>')
 				.addClass(bgClass)
@@ -82,11 +73,16 @@ Board.prototype.render = function(newVals){
 	//add our new one
 	var self = this;
 	if (newVals != null){
-		$('#board .orb').each(function(i, element){
+		self.$table.find('.orb').each(function(i, element){
 			//careful context of this changed ! :O
 			var $gem = $(element);
+			var colour = Pazudora.orbSprites[self.vals[i]];
+			if (colour == null){ 
+				self.vals[i] = 6;		//set colour to unknown if invalid
+				colour = Pazudora.orbSprites[self.vals[i]];	
+			}
 			$gem.removeClass('fire water wood dark light heal unknown')
-			.addClass(pazudora.orbSprites[self.vals[i]]);
+			.addClass(colour);
 		});
 	}
 }
@@ -123,22 +119,13 @@ Editor.prototype.curOrb = 'wtf';
 Editor.prototype.buffer = [];
 Editor.prototype.mommy = null;
 
-
 Editor.prototype.editOrb = function(event){
 	if (!this.active){ return null; }
 
 	// //colour to add
 	var colour = event.currentTarget.className.replace('orb', '').trim();
 
-	// //get our current orb
-	// var $gem = $(this.$orbs.get(this.curOrb));
-	// $gem.removeClass('fire water wood dark light heal unknown')
-	// .addClass(colour);
-
-	//modify the vars from board
-	// this.buffer[this.curOrb] = sagashi($board.orbSprites, colour);
-
-	$board.vals[this.curOrb] = sagashi(pazudora.orbSprites, colour);
+	this.mommy.vals[this.curOrb] = sagashi(Pazudora.orbSprites, colour);
 	++this.curOrb;		//can't use ++ cuz it screws wiht the watch
 }
 
@@ -157,7 +144,7 @@ Editor.prototype.make = function(){
 
 		//when we are clicked change the edit mode
 		if (!self.active){
-			$onOffSwitch.click();
+			self.edit();
 		}
 
 		//set edit styles	
@@ -171,35 +158,45 @@ Editor.prototype.make = function(){
 	var $panel = $('<ul>', {id:'board_editor'});
 	var $panelOrbs = [];
 	for (var i=0; i<6;++i){
-		var orbClass = pazudora.orbSprites[i];
+		var orbClass = Pazudora.orbSprites[i];
 		var $orb = $('<li>').addClass('orb').addClass(orbClass).on('click', this.editOrb.bind(this));
 		$panelOrbs.push($orb);
 	}
 
-	$panel.append($onOffSwitch);
+	// $panel.append($onOffSwitch);
 	for (var i=0;i<$panelOrbs.length;++i){
 		$panel.append($panelOrbs[i]);
 	}
 
 	this.$panel = $panel;
-
 }
 
-Editor.prototype.edit = function(event){
+Editor.prototype.edit = function(){
+	var self = this;
 	//load orbs
 	this.$orbs = this.mommy.$table.find('.orb');
 
 	//toggle active
 	this.active = !this.active;
-	event.currentTarget.textContent = this.active ? 'Done' : 'Edit';
 
 	if (this.active){		//edit mode on
 		this.$orbs.toggleClass('unselected');
-		this.curOrb = 0;
+		//edit mode on, lets bind this stupid click event
+		$(document).on('mouseup', urusai);
 	}
 	else {		//edit mode off
 		this.$orbs.removeClass('unselected selected');
 		this.curOrb = null;
+		$(document).off('mouseup');
+	}
+
+	function urusai (event){
+		var pos = self.$panel.position();
+		var x = self.$panel.width() + pos.left;
+		var y = self.$panel.height() + pos.top;
+		if (event.clientX > x || event.clientY > y){	//no longer inside editor, lets turn it off
+			self.edit();
+		}
 	}
 }
 
