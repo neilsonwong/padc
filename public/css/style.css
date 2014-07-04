@@ -1,3 +1,8 @@
+body {
+  white-space: nowrap;
+  position: absolute;
+}
+
 table { 
 	border-spacing:0px;
 }
@@ -115,6 +120,21 @@ td .orb:hover {
   animation-iteration-count: infinite;
 }
 
+#board_editor {
+  padding:0px;
+  margin:0px;
+  white-space: nowrap;
+}
+
 #board_editor > li {
 	list-style: none;
+  display:inline-block;
+}
+
+.hidden {
+  display:none;
+}
+
+.module {
+  float:left;
 }
