@@ -20,7 +20,7 @@ function Board(){
 		}
 
 		//set board to unselected if no preset
-		if (!boardVals){  }
+		if (!boardVals){ boardVals = Board.defaultBoard; }
 		return boardVals;
 	}
 
@@ -35,7 +35,7 @@ function Board(){
 
 Board.boardBGs = {0:'bg_0', 
 							1:'bg_1' };
-Board.defaultBoard=[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6];
+Board.defaultBoard = [6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6];
 
 //members
 Board.prototype.vals = Board.defaultBoard;
