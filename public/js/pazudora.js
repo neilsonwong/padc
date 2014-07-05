@@ -1,8 +1,19 @@
 //Global state of the page
-//essentially just a namespace for me :)
 
 function Pazudora() {
-	this.$board = new Board(); 
+	var self = this;
+	this.baseURL = [location.protocol, '//', location.host, location.pathname].join('');
+
+	this.$board = new Board();
+
+	//add only renderable properties
+	(function pushContent(){
+	    for (key in self) {
+	        if (self.hasOwnProperty(key) && self[key].hasOwnProperty('$html')){
+				self.$content.push(self[key]);
+	        }
+	    }
+	})();
 }
 
 //Gloabl Constants vars
@@ -15,30 +26,17 @@ Pazudora.orbSprites = {	0:'fire',
 				6:'unknown' };
 
 //vars representing the global state
-Pazudora.prototype.$board;
-
-
-var baseURL = [location.protocol, '//', location.host, location.pathname].join('');
+Pazudora.prototype.$board = {};
+Pazudora.prototype.$content = [];
+Pazudora.prototype.baseURL = '';
 
 //methods
 Pazudora.prototype.render = function() {
 	var $body = $('body');
 
-	//layout elements
-	// var $madoka = makeMadoka();
-
-	//main layout
-	// var $D2 = $('<div>').append($madoka);
-
-	//clear body
-	$body.html('');
-
-	//update content values
-	var $D1 = $('<div>', {class:'module'})
-	.append(this.$board.$table)
-	.append(this.$board.editor.$panel);
-
 	//render content
-	$body.append($D1);
+	for (var i=0; i<this.$content.length;++i) {
+		$body.append(this.$content[i].$html);
+	}
 }
 

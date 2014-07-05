@@ -8,6 +8,11 @@ function Board(){
 	this.editor = new Editor(this);
 
 
+	this.$html = $('<div>', {class:'module'})
+	.append(this.$table)
+	.append(this.editor.$panel);
+
+
 	function loadPresetBoard(){
 		var a = $.getUrlVar('board');
 		var boardVals = null;
@@ -40,6 +45,7 @@ Board.defaultBoard = [6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
 Board.prototype.vals = Board.defaultBoard;
 Board.prototype.$table = null;
 Board.prototype.editor = {};
+Board.prototype.$html = {};
 
 //generate table cells
 Board.prototype.make = function (b){
