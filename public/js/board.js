@@ -109,8 +109,30 @@ function Editor(parent){
 		}
 	}
 
+	function toggleActive(){
+		if (this.active){		//edit mode on
+			this.$orbs.toggleClass('unselected');
+			//edit mode on, lets bind this stupid click event
+			$(document).on('mouseup', urusai);
+		}
+		else {		//edit mode off
+			this.$orbs.removeClass('unselected selected');
+			this.curOrb = null;
+			$(document).off('mouseup');
+		}
+		
+		function urusai (event){
+			var pos = self.$panel.position();
+			var x = self.$panel.width() + pos.left;
+			var y = self.$panel.height() + pos.top;
+			if (event.clientX > x || event.clientY > y){	//no longer inside editor, lets turn it off
+				self.edit();
+			}
+		}
+	}
 
 	watch(this, "curOrb", activateOrb);
+	watch(this, "active", toggleActive);
 }
 
 Editor.prototype.$panel = null;
@@ -179,25 +201,6 @@ Editor.prototype.edit = function(){
 	//toggle active
 	this.active = !this.active;
 
-	if (this.active){		//edit mode on
-		this.$orbs.toggleClass('unselected');
-		//edit mode on, lets bind this stupid click event
-		$(document).on('mouseup', urusai);
-	}
-	else {		//edit mode off
-		this.$orbs.removeClass('unselected selected');
-		this.curOrb = null;
-		$(document).off('mouseup');
-	}
-
-	function urusai (event){
-		var pos = self.$panel.position();
-		var x = self.$panel.width() + pos.left;
-		var y = self.$panel.height() + pos.top;
-		if (event.clientX > x || event.clientY > y){	//no longer inside editor, lets turn it off
-			self.edit();
-		}
-	}
 }
 
 
