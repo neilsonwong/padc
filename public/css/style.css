@@ -1,6 +1,12 @@
 body {
   white-space: nowrap;
   position: absolute;
+
+  font-family: sans-serif;
+}
+
+p {
+  margin:0.5em;
 }
 
 table { 
@@ -120,9 +126,73 @@ td .orb:hover {
   animation-iteration-count: infinite;
 }
 
+/* Hover */
+@-webkit-keyframes levitate {
+  50% {
+    -webkit-transform: translateY(-3px);
+    transform: translateY(-3px);
+  }
+
+  100% {
+    -webkit-transform: translateY(-6px);
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes levitate {
+  50% {
+    -webkit-transform: translateY(-3px);
+    transform: translateY(-3px);
+  }
+
+  100% {
+    -webkit-transform: translateY(-6px);
+    transform: translateY(-6px);
+  }
+}
+
+.levitate {
+  display: inline-block;
+  position: relative;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+.levitate:before {
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+  content: '';
+  top: 100%;
+  left: 5%;
+  height: 10px;
+  width: 90%;
+  opacity: 0;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 80%);
+  /* W3C */
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: transform, opacity;
+  transition-property: transform, opacity;
+}
+.levitate:hover {
+  -webkit-transform: translateY(-5px);
+  transform: translateY(-5px);
+  /* move the element up by 5px */
+}
+.levitate:hover:before {
+  opacity: 1;
+  -webkit-transform: translateY(5px);
+  transform: translateY(5px);
+  /* move the element down by 5px (it will stay in place because it's attached to the element that also moves up 5px) */
+}
+
 #board_editor {
   padding:0px;
-  margin:0px;
   white-space: nowrap;
 }
 
@@ -131,10 +201,66 @@ td .orb:hover {
   display:inline-block;
 }
 
+/* info box styles */
+
+.bubble {
+  margin-left: 15px;
+  padding: 0.5em;
+  background: #e1e1e1;
+  text-decoration: none;
+  color: #666666;
+  min-height: calc(100px - 1em);
+  min-width: 100px;
+  content:'hello';
+}
+
+.bubble-left {
+  display: inline-block;
+  position: relative;
+  border-radius: 0.75em;
+}
+.bubble-left:before {
+  position: absolute;
+  z-index: 6;
+  content: '';
+  border-style: solid;
+  top: 40px;
+  left: -10px;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent #e1e1e1 transparent transparent;
+}
+
+.speaker {
+  float:left;
+}
+
+
+
+
+/* characters */
+
+.light-metatron {
+  background: url('../assets/special/LMeta.png') no-repeat 0px 0px;
+  width: 100px;
+  height: 100px;
+}
+
+/* meant to be at the very end */
+
 .hidden {
   display:none;
 }
 
 .module {
   float:left;
+}
+
+.module > div,
+.module > table,
+.module > ul {
+  margin:10px;
+}
+
+.encapsulate {
+  overflow: auto;
 }

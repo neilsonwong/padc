@@ -4,11 +4,13 @@
 function Board(){
 	var self = this;
 	this.vals = loadPresetBoard();
-	this.make();
+	this.$table = this.make();
 	this.editor = new Editor(this);
+	this.infos = new LMeta();
 
 
 	this.$html = $('<div>', {class:'module'})
+	.append(this.infos.$infoBox)
 	.append(this.$table)
 	.append(this.editor.$panel);
 
@@ -45,6 +47,7 @@ Board.defaultBoard = [6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
 Board.prototype.vals = Board.defaultBoard;
 Board.prototype.$table = null;
 Board.prototype.editor = {};
+Board.prototype.infos = {};
 Board.prototype.$html = {};
 
 //generate table cells
@@ -66,7 +69,7 @@ Board.prototype.make = function (b){
 		}
 		$t.append($row);
 	}
-	this.$table = $t;
+	return $t;
 }
 
 Board.prototype.render = function(newVals){
@@ -121,9 +124,11 @@ function Editor(parent){
 			//edit mode on, lets bind this stupid click event
 			$(document).on('mouseup', urusai);
 			//bind clicks to panel
+			panelOrbs.addClass('levitate');
 			panelOrbs.on('click', this.editOrb.bind(this));
 		}
 		else {		//edit mode off
+			panelOrbs.removeClass('levitate');
 			this.$orbs.removeClass('unselected selected');
 			this.curOrb = null;
 			$(document).off('mouseup');
@@ -131,10 +136,15 @@ function Editor(parent){
 		}
 
 		function urusai (event){
+			var x = event.clientX;
+			var y = event.clientY;
+			var bPos = self.mommy.$table.position();
 			var pos = self.$panel.position();
-			var x = self.$panel.width() + pos.left;
-			var y = self.$panel.height() + pos.top;
-			if (event.clientX > x || event.clientY > y){	//no longer inside editor, lets turn it off
+			var minX = bPos.left;
+			var minY = bPos.top;
+			var maxX = self.$panel.width() + pos.left;
+			var maxY = self.$panel.height() + pos.top;
+			if (x > maxX || y > maxY || x < minX || y < minY){	//no longer inside editor, lets turn it off
 				self.toggleEdit();
 			}
 		}
@@ -153,10 +163,7 @@ Editor.prototype.mommy = null;
 Editor.prototype.editOrb = function(event){
 	if (!this.active){ return null; }
 
-	// //colour to add
-	var colour = event.currentTarget.className.replace('orb', '').trim();
-
-	this.mommy.vals[this.curOrb] = sagashi(Pazudora.orbSprites, colour);
+	this.mommy.vals[this.curOrb] = $(event.currentTarget).attr('orbType');
 	++this.curOrb;
 }
 
@@ -182,7 +189,7 @@ Editor.prototype.make = function(){
 	var $panelOrbs = [];
 	for (var i=0; i<6;++i){
 		var orbClass = Pazudora.orbSprites[i];
-		var $orb = $('<li>', {class:'orb '+orbClass});
+		var $orb = $('<li>', {class:'orb '+orbClass, orbType:i});
 		$panelOrbs.push($orb);
 	}
 
@@ -199,3 +206,29 @@ Editor.prototype.toggleEdit = function(){
 }
 
 
+function LMeta(){
+	var $metatron = $('<div>', {class:'speaker light-metatron'});
+	this.$shujinko = $metatron;
+	this.setText(this.defaultText);
+	var hasSpoken = $('<div>', {id:'infobox', class:'encapsulate'})
+	.append(this.$shujinko)
+	.append(this.$bubble);
+	this.$infoBox = hasSpoken;
+}
+
+LMeta.prototype.text = '';
+LMeta.prototype.defaultText = 'Click on an orb to edit it\nYou can pick orbs quickly using the keyboard hotkeys';
+LMeta.prototype.$shujinko = {};
+LMeta.prototype.$bubble = {};
+LMeta.prototype.$infoBox = {};
+
+LMeta.prototype.setText = function(text){
+	var bubble = $('<div>', {id:'LMeta_is_talking', class:'bubble bubble-left'});
+	var parts = text.split('\n');
+	for (var i=0; i<parts.length; ++i){
+		var $newLine = $('<p>', {html:parts[i]});
+		bubble.append($newLine);
+	}
+	this.text = text;
+	this.$bubble = bubble;
+}
