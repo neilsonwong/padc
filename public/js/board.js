@@ -40,7 +40,7 @@ function Board(){
 }
 
 Board.boardBGs = {0:'bg_0', 
-							1:'bg_1' };
+				1:'bg_1' };
 Board.defaultBoard = [6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6];
 
 //members
@@ -119,12 +119,13 @@ function Editor(parent){
 	function toggleActive(){
 		var boardOrbs = this.$orbs;
 		var panelOrbs = this.$panel.find('.orb');
-		panelOrbs.find('ul.hotkey').toggleClass('hidden');
-		
+		panelOrbs.find('ul.hotkey').toggleClass('very-light');
+
 		if (this.active){		//edit mode on
 			boardOrbs.toggleClass('unselected');
-			//edit mode on, lets bind this stupid click event
+			//edit mode on, lets bind this stupid click event and keyboard event
 			$(document).on('mouseup', urusai);
+			$(document).on('keydown',keyboardEdit);
 			//bind clicks to panel
 			panelOrbs.addClass('levitate');
 			panelOrbs.on('click', this.editOrb.bind(this));
@@ -133,6 +134,7 @@ function Editor(parent){
 			panelOrbs.removeClass('levitate');
 			this.$orbs.removeClass('unselected selected');
 			this.curOrb = null;
+			$(document).off('keydown');
 			$(document).off('mouseup');
 			panelOrbs.off('click');
 		}
@@ -150,6 +152,59 @@ function Editor(parent){
 				self.toggleEdit();
 			}
 		}
+
+		function keyboardEdit(e){
+			//del = 8
+			//space = 32
+			//enter = 13
+			//left = 37
+			//up = 38
+			//right = 39
+			//down = 40
+			var key = e.keyCode;
+			if (key in Editor.hotkeys.fast){
+				e.preventDefault();
+				//valid hotkey pushed
+				switch(key){
+					case 8:
+					case 37:
+						--self.curOrb;
+					break;
+					case 32:
+					case 39:
+						++self.curOrb;
+					break;
+					case 13:
+						self.toggleEdit();
+					break;
+					case 38:
+						self.curOrb -= self.curOrb > 5 ? 6 : 0;
+					break;
+					case 40:
+						self.curOrb += self.curOrb < 24 ? 6 : 0;
+					break;
+					default:
+						var orbType = Editor.hotkeys.fast[key];
+						self.mommy.vals[self.curOrb] = orbType;
+						if (!('pooping' in self)){ self.pooping = [0,0,0,0,0,0]; }		//semaphore
+						popOrb(orbType);
+						++self.curOrb;
+					break;
+				}
+
+			}
+			function popOrb(i){
+				++self.pooping[i];
+				var orb = $(self.$panel.find('.orb').get(i));
+				orb.addClass('hop');
+				setTimeout(function(){
+					--self.pooping[i];
+					if (self.pooping[i] == 0){
+						$(self.$panel.find('.orb').get(i)).removeClass('hop');
+					}
+				},200);
+			}
+		};
 	}
 
 	watch(this, "curOrb", activateOrb);
@@ -161,6 +216,22 @@ Editor.prototype.active = false;
 Editor.prototype.curOrb = 'wtf';
 Editor.prototype.buffer = [];
 Editor.prototype.mommy = null;
+Editor.hotkeys = {0:[{key:'a', keyCode:65},{key:'1', keyCode:97},{key:'1', keyCode:49}],
+				1:[{key:'s', keyCode:83},{key:'2', keyCode:98},{key:'2', keyCode:50}],
+				2:[{key:'d', keyCode:68},{key:'3', keyCode:99},{key:'3', keyCode:51}],
+				3:[{key:'f', keyCode:70},{key:'4', keyCode:100},{key:'4', keyCode:52}],
+				4:[{key:'g', keyCode:71},{key:'5', keyCode:101},{key:'5', keyCode:53}],
+				5:[{key:'h', keyCode:72},{key:'6', keyCode:102},{key:'6', keyCode:54}],
+				fast:{8:-1,32:-1,13:-1,37:-1,38:-1,39:-1,40:-1}};		//[del,space,enter]
+
+//autopopulate a fash hash
+$.each(Editor.hotkeys,function(k,v){		
+	if (k != 'fast'){
+		for (var i=0;i<v.length;++i){
+			Editor.hotkeys.fast[v[i]['keyCode']] = k;
+		}
+	}
+});
 
 Editor.prototype.editOrb = function(event){
 	if (!this.active){ return null; }
@@ -189,12 +260,11 @@ Editor.prototype.make = function(){
 	//orb selection panel
 	var $panel = $('<ul>', {id:'board_editor'});
 	var $panelOrbs = [];
-	var hotkeys = ['a','s','d','f','g','h'];
 	for (var i=0; i<6;++i){
 		var orbClass = Pazudora.orbSprites[i];
-		var $HK1 = $('<li>', {class:'hotkey',html:i});
-		var $HK2 = $('<li>', {class:'hotkey',html:hotkeys[i]});
-		var $HKS = $('<ul>',{class:'hotkey hidden'}).append($HK1).append($HK2);
+		var $HK1 = $('<li>', {class:'hotkey',html:i});		//show number
+		var $HK2 = $('<li>', {class:'hotkey',html:Editor.hotkeys[i][0]['key']});	//show letter
+		var $HKS = $('<ul>',{class:'hotkey very-light'}).append($HK1).append($HK2);
 
 		var $orb = $('<li>', {class:'orb '+orbClass, orbType:i})
 		.append($HKS);
