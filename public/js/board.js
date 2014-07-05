@@ -119,6 +119,8 @@ function Editor(parent){
 	function toggleActive(){
 		var boardOrbs = this.$orbs;
 		var panelOrbs = this.$panel.find('.orb');
+		panelOrbs.find('ul.hotkey').toggleClass('hidden');
+		
 		if (this.active){		//edit mode on
 			boardOrbs.toggleClass('unselected');
 			//edit mode on, lets bind this stupid click event
@@ -142,8 +144,8 @@ function Editor(parent){
 			var pos = self.$panel.position();
 			var minX = bPos.left;
 			var minY = bPos.top;
-			var maxX = self.$panel.width() + pos.left;
-			var maxY = self.$panel.height() + pos.top;
+			var maxX = self.$panel.outerWidth(true) + pos.left;
+			var maxY = self.$panel.outerHeight(true) + pos.top;
 			if (x > maxX || y > maxY || x < minX || y < minY){	//no longer inside editor, lets turn it off
 				self.toggleEdit();
 			}
@@ -163,7 +165,7 @@ Editor.prototype.mommy = null;
 Editor.prototype.editOrb = function(event){
 	if (!this.active){ return null; }
 
-	this.mommy.vals[this.curOrb] = $(event.currentTarget).attr('orbType');
+	this.mommy.vals[this.curOrb] = parseInt($(event.currentTarget).attr('orbType'));
 	++this.curOrb;
 }
 
@@ -187,9 +189,16 @@ Editor.prototype.make = function(){
 	//orb selection panel
 	var $panel = $('<ul>', {id:'board_editor'});
 	var $panelOrbs = [];
+	var hotkeys = ['a','s','d','f','g','h'];
 	for (var i=0; i<6;++i){
 		var orbClass = Pazudora.orbSprites[i];
-		var $orb = $('<li>', {class:'orb '+orbClass, orbType:i});
+		var $HK1 = $('<li>', {class:'hotkey',html:i});
+		var $HK2 = $('<li>', {class:'hotkey',html:hotkeys[i]});
+		var $HKS = $('<ul>',{class:'hotkey hidden'}).append($HK1).append($HK2);
+
+		var $orb = $('<li>', {class:'orb '+orbClass, orbType:i})
+		.append($HKS);
+
 		$panelOrbs.push($orb);
 	}
 
@@ -217,7 +226,7 @@ function LMeta(){
 }
 
 LMeta.prototype.text = '';
-LMeta.prototype.defaultText = 'Click on an orb to edit it\nYou can pick orbs quickly using the keyboard hotkeys';
+LMeta.prototype.defaultText = 'Click on an orb to edit it\nYou can pick orbs quickly using the keyboard hotkeys\nClick anywhere else when you are done';
 LMeta.prototype.$shujinko = {};
 LMeta.prototype.$bubble = {};
 LMeta.prototype.$infoBox = {};

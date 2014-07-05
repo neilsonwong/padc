@@ -2,7 +2,11 @@ body {
   white-space: nowrap;
   position: absolute;
 
-  font-family: sans-serif;
+  font-family: 'Open Sans', sans-serif;
+}
+
+ul {
+  padding-left: 0px;
 }
 
 p {
@@ -43,19 +47,19 @@ td .orb:hover {
 }
 
 .water {
-	background: url('../assets/sprites.png') no-repeat -2px -59px;
+	background: url('../assets/sprites.png') no-repeat -2px -60px;
 }
 
 .wood {
-	background: url('../assets/sprites.png') no-repeat -2px -117px;
+	background: url('../assets/sprites.png') no-repeat -3px -118px;
 }
 
 .light {
-	background: url('../assets/sprites.png') no-repeat -1px -175px;
+	background: url('../assets/sprites.png') no-repeat -2px -176px;
 }
 
 .dark {
-	background: url('../assets/sprites.png') no-repeat -1px -233px;
+	background: url('../assets/sprites.png') no-repeat -2px -234px;
 }
 
 .unknown {
@@ -63,9 +67,7 @@ td .orb:hover {
 }
 
 .heal {
-	background: url('../assets/sprites.png') no-repeat -3px -294px;
-	width: 52px;
-	height: 49px;
+	background: url('../assets/sprites.png') no-repeat -3px -292px;
 }
 
 .bg_0 {
@@ -192,14 +194,46 @@ td .orb:hover {
 }
 
 #board_editor {
-  padding:0px;
+  /*padding-top:5px;*/
+  padding-top:5px;
+  padding-bottom:10px;
   white-space: nowrap;
+  width: fit-content;
+  width: -moz-fit-content;
+  width: -webkit-fit-content; 
+  display: block;
+  overflow:hidden;
 }
 
 #board_editor > li {
 	list-style: none;
-  display:inline-block;
+  display:block;
+  padding:2px;
+  float:left;
+  position: relative;
 }
+
+ul.hotkey {
+  list-style: none;
+  -webkit-padding-start: 0px;
+  position: absolute;
+  bottom: 0px;
+  list-style: none;
+}
+
+li.hotkey:before{
+  content:'[';
+}
+li.hotkey:after{
+  content:']';
+}
+li.hotkey{
+  /*color:yellow;*/
+  font-weight: 700; 
+  font-size: 10px;
+  float: left;
+}
+
 
 /* info box styles */
 
