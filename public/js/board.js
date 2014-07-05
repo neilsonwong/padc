@@ -26,7 +26,6 @@ function Board(){
 
 
 	var update = function(id, action, newVal, oldVal){
-		console.log('update table values');
 		self.render(newVal);
 	}
 
@@ -92,6 +91,9 @@ function Editor(parent){
 	var self = this;
 	this.make();
 
+	//load orbs
+	this.$orbs = this.mommy.$table.find('.orb');
+
 	var activateOrb = function (id, action, newVal, oldVal){
 		var $oldOrb = $(this.$orbs.get(oldVal));
 		var $newOrb = $(this.$orbs.get(newVal));
@@ -110,23 +112,28 @@ function Editor(parent){
 	}
 
 	function toggleActive(){
+		var boardOrbs = this.$orbs;
+		var panelOrbs = this.$panel.find('.orb');
 		if (this.active){		//edit mode on
-			this.$orbs.toggleClass('unselected');
+			boardOrbs.toggleClass('unselected');
 			//edit mode on, lets bind this stupid click event
 			$(document).on('mouseup', urusai);
+			//bind clicks to panel
+			panelOrbs.on('click', this.editOrb.bind(this));
 		}
 		else {		//edit mode off
 			this.$orbs.removeClass('unselected selected');
 			this.curOrb = null;
 			$(document).off('mouseup');
+			panelOrbs.off('click');
 		}
-		
+
 		function urusai (event){
 			var pos = self.$panel.position();
 			var x = self.$panel.width() + pos.left;
 			var y = self.$panel.height() + pos.top;
 			if (event.clientX > x || event.clientY > y){	//no longer inside editor, lets turn it off
-				self.edit();
+				self.toggleEdit();
 			}
 		}
 	}
@@ -148,25 +155,17 @@ Editor.prototype.editOrb = function(event){
 	var colour = event.currentTarget.className.replace('orb', '').trim();
 
 	this.mommy.vals[this.curOrb] = sagashi(Pazudora.orbSprites, colour);
-	++this.curOrb;		//can't use ++ cuz it screws wiht the watch
+	++this.curOrb;
 }
 
 Editor.prototype.make = function(){
 	var self = this;
 
-	var $onOffSwitch = $('<button>', {text:'Edit'})
-	.on('click', this.edit.bind(this));
-
 	//we also need to glue a callback function onto the orbs from our board :P
 	function poke(event){
-		//load orbs
-		if (!self.$orbs){
-			self.$orbs = self.mommy.$table.find('.orb');
-		}
-
 		//when we are clicked change the edit mode
 		if (!self.active){
-			self.edit();
+			self.toggleEdit();
 		}
 
 		//set edit styles	
@@ -181,11 +180,10 @@ Editor.prototype.make = function(){
 	var $panelOrbs = [];
 	for (var i=0; i<6;++i){
 		var orbClass = Pazudora.orbSprites[i];
-		var $orb = $('<li>').addClass('orb').addClass(orbClass).on('click', this.editOrb.bind(this));
+		var $orb = $('<li>').addClass('orb').addClass(orbClass);
 		$panelOrbs.push($orb);
 	}
 
-	// $panel.append($onOffSwitch);
 	for (var i=0;i<$panelOrbs.length;++i){
 		$panel.append($panelOrbs[i]);
 	}
@@ -193,14 +191,9 @@ Editor.prototype.make = function(){
 	this.$panel = $panel;
 }
 
-Editor.prototype.edit = function(){
-	var self = this;
-	//load orbs
-	this.$orbs = this.mommy.$table.find('.orb');
-
+Editor.prototype.toggleEdit = function(){
 	//toggle active
 	this.active = !this.active;
-
 }
 
 
