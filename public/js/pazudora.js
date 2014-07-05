@@ -34,7 +34,8 @@ Pazudora.prototype.render = function() {
 	$body.html('');
 
 	//update content values
-	var $D1 = $('<div>').addClass('module').append(this.$board.$table)
+	var $D1 = $('<div>', {class:'module'})
+	.append(this.$board.$table)
 	.append(this.$board.editor.$panel);
 
 	//render content

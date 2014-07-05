@@ -51,15 +51,11 @@ Board.prototype.make = function (b){
 
 	for (var i=0; i < 5;++i){
 		var $row = $('<tr>');
-		var $populator = {};
 		for (var j=0; j < 6; ++j){
 			var bgClass=boardBGs[((i%2)+(j%2)+1)%2];	//calculate the bg class
 			var orbClass=Pazudora.orbSprites[boardVals[6*i+j]] ? orbSprites[boardVals[6*i+j]] : orbSprites[6];
-			var $orb = $('<div>').addClass('orb').addClass(orbClass);
-			var $cell = $('<td>')
-				.addClass(bgClass)
-				.append($orb);
-			$populator[j] = $cell;
+			var $orb = $('<div>', {class:'orb '+orbClass});
+			var $cell = $('<td>', {class:bgClass}).append($orb);
 			$row.append($cell);
 		}
 		$t.append($row);
@@ -180,7 +176,7 @@ Editor.prototype.make = function(){
 	var $panelOrbs = [];
 	for (var i=0; i<6;++i){
 		var orbClass = Pazudora.orbSprites[i];
-		var $orb = $('<li>').addClass('orb').addClass(orbClass);
+		var $orb = $('<li>', {class:'orb '+orbClass});
 		$panelOrbs.push($orb);
 	}
 
