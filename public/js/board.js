@@ -6,13 +6,14 @@ function Board(){
 	this.vals = loadPresetBoard();
 	this.$table = this.make();
 	this.editor = new Editor(this);
-	this.infos = new LMeta();
-
+	this.infos = new LMeta();		//instructions
+	this.infos2 = new Bastet();		//sharing
 
 	this.$html = $('<div>', {class:'module'})
 	.append(this.infos.$infoBox)
 	.append(this.$table)
-	.append(this.editor.$panel);
+	.append(this.editor.$panel)
+	.append(this.infos2.$infoBox);
 
 
 	function loadPresetBoard(){
@@ -262,7 +263,7 @@ Editor.prototype.make = function(){
 	var $panelOrbs = [];
 	for (var i=0; i<6;++i){
 		var orbClass = Pazudora.orbSprites[i];
-		var $HK1 = $('<li>', {class:'hotkey',html:i});		//show number
+		var $HK1 = $('<li>', {class:'hotkey',html:i+1});		//show number
 		var $HK2 = $('<li>', {class:'hotkey',html:Editor.hotkeys[i][0]['key']});	//show letter
 		var $HKS = $('<ul>',{class:'hotkey very-light'}).append($HK1).append($HK2);
 
@@ -309,5 +310,25 @@ LMeta.prototype.setText = function(text){
 		bubble.append($newLine);
 	}
 	this.text = text;
+	this.$bubble = bubble;
+}
+
+function Bastet(content){
+	var $bastet = $('<div>', {class:'speaker bastet'});
+	this.$shujinko = $bastet;
+	this.setContent(content);
+	var hasSpoken = $('<div>', {id:'infobox', class:'encapsulate'})
+	.append(this.$shujinko)
+	.append(this.$bubble);
+	this.$infoBox = hasSpoken;
+}
+
+Bastet.prototype.content = '';
+Bastet.prototype.$shujinko = {};
+Bastet.prototype.$bubble = {};
+Bastet.prototype.$infoBox = {};
+
+Bastet.prototype.setContent= function(content){
+	var bubble = $('<div>', {id:'Bastet_is_talking', class:'bubble bubble-left'}).append(content);
 	this.$bubble = bubble;
 }

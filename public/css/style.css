@@ -232,6 +232,16 @@ ul.hotkey {
   width: 100px;
   height: 100px;
 }
+.bastet {
+  background: url("../assets/special/bastet.png") no-repeat 0px 0px;
+  width: 100px;
+  height: 100px;
+}
+.ronia {
+  background: url("../assets/special/ronia.png") no-repeat 0px 0px;
+  width: 100px;
+  height: 100px;
+}
 /* meant to be at the very end */
 .hidden {
   display: none;
