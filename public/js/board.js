@@ -4,17 +4,18 @@
 function Board(){
 	var self = this;
 	this.vals = loadPresetBoard();
+	this.hash = Codec.encode(this.vals);
 	this.$table = this.make();
 	this.editor = new Editor(this);
 	this.infos = new LMeta();		//instructions
-	this.infos2 = new Bastet();		//sharing
+	this.infos2 = new Bastet(this.hash);		//sharing
+
 
 	this.$html = $('<div>', {class:'module'})
 	.append(this.infos.$infoBox)
 	.append(this.$table)
 	.append(this.editor.$panel)
 	.append(this.infos2.$infoBox);
-
 
 	function loadPresetBoard(){
 		var a = $.getUrlVar('board');
@@ -35,6 +36,8 @@ function Board(){
 
 	var update = function(id, action, newVal, oldVal){
 		self.render(newVal);
+		self.hash = Codec.encode(self.vals);
+		self.infos2.setText(self.hash);
 	}
 
 	watch(this, "vals", update);
@@ -286,23 +289,21 @@ Editor.prototype.toggleEdit = function(){
 }
 
 
-function LMeta(){
-	var $metatron = $('<div>', {class:'speaker light-metatron'});
-	this.$shujinko = $metatron;
-	this.setText(this.defaultText);
-	var hasSpoken = $('<div>', {id:'infobox', class:'encapsulate'})
-	.append(this.$shujinko)
-	.append(this.$bubble);
-	this.$infoBox = hasSpoken;
+function ChatBox(){
+	//abstract class
+	//implementer will be responsible for 
+	//this.$shujinko
+	//this.defaultText
+	//this.setText	(if override is desired)
+	//this.$infoBox
 }
 
-LMeta.prototype.text = '';
-LMeta.prototype.defaultText = 'Click on an orb to edit it\nYou can pick orbs quickly using the keyboard hotkeys\nClick anywhere else when you are done';
-LMeta.prototype.$shujinko = {};
-LMeta.prototype.$bubble = {};
-LMeta.prototype.$infoBox = {};
+ChatBox.prototype.text = '';
+ChatBox.prototype.$shujinko = {};
+ChatBox.prototype.$bubble = {};
+ChatBox.prototype.$infoBox = {};
 
-LMeta.prototype.setText = function(text){
+ChatBox.prototype.setText = function(text){
 	var bubble = $('<div>', {id:'LMeta_is_talking', class:'bubble bubble-left'});
 	var parts = text.split('\n');
 	for (var i=0; i<parts.length; ++i){
@@ -313,22 +314,37 @@ LMeta.prototype.setText = function(text){
 	this.$bubble = bubble;
 }
 
-function Bastet(content){
-	var $bastet = $('<div>', {class:'speaker bastet'});
-	this.$shujinko = $bastet;
-	this.setContent(content);
+function LMeta() { 
+	var $metatron = $('<div>', {class:'speaker light-metatron'});
+	this.$shujinko = $metatron;
+	this.setText(this.defaultText);
 	var hasSpoken = $('<div>', {id:'infobox', class:'encapsulate'})
 	.append(this.$shujinko)
 	.append(this.$bubble);
 	this.$infoBox = hasSpoken;
 }
+LMeta.prototype = new ChatBox();
+LMeta.prototype.defaultText = 'Click on an orb to edit it\nYou can pick orbs quickly using the keyboard hotkeys\nClick anywhere else when you are done';
 
-Bastet.prototype.content = '';
-Bastet.prototype.$shujinko = {};
-Bastet.prototype.$bubble = {};
-Bastet.prototype.$infoBox = {};
 
-Bastet.prototype.setContent= function(content){
-	var bubble = $('<div>', {id:'Bastet_is_talking', class:'bubble bubble-left'}).append(content);
+function Bastet(hash){
+	var $bastet = $('<div>', {class:'speaker bastet'});
+	this.$shujinko = $bastet;
+	this.setText(hash);
+	var hasSpoken = $('<div>', {id:'infobox', class:'encapsulate'})
+	.append(this.$shujinko)
+	.append(this.$bubble);
+	this.$infoBox = hasSpoken;
+}
+Bastet.prototype = new ChatBox();
+Bastet.prototype.defaultText = 'You can share this board!';
+
+Bastet.prototype.setText = function(text){
+	var bubble = $.isEmptyObject(this.$bubble) ? $('<div>', {id:'Bastet_is_talking', class:'bubble bubble-left'}) : this.$bubble;
+	var $firstLine = $('<p>', {html:this.defaultText});
+	var url = [location.protocol, '//', location.host, location.pathname].join('')+'?h='+text;
+	var $newLine = $('<p>', {html:url});
+	bubble.html($firstLine).append($newLine);
+	this.text = text;
 	this.$bubble = bubble;
 }
