@@ -19,6 +19,15 @@ function Board(){
 
 	function loadPresetBoard(){
 		var a = $.getUrlVar('board');
+		var h = $.getUrlVar('h');
+
+		//try to get hash value from h
+		if (h != null){
+			//we have a hash lets try to decode it
+			var decoded = Codec.decode(h);
+			return decoded;
+		}
+
 		var boardVals = null;
 		try {
 			boardVals = a ? JSON.parse(a) : undefined; a=null;

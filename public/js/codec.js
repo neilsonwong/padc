@@ -134,10 +134,10 @@ Codec.decode = function(hash){
 	for (var i = 0; i<hash.length; ++i){
 		var key = hash[i];
 		if (key in Codec.dec){
-			var a = Codec.dec[key][0];
-			var b = Codec.dec[key][1];
-			array.push(a);
-			array.push(b);
+			var a = parseInt(Codec.dec[key][0]);
+			var b = parseInt(Codec.dec[key][1]);
+			array.push(a != NaN ? a : 6);
+			array.push(b != NaN ? b : 6);
 		}
 	}
 	return array;
