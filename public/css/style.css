@@ -358,3 +358,37 @@ ul.hotkey {
     transform: translateY(-6px);
   }
 }
+.console{
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index:2;
+}
+.console.inactive{
+}
+.consoleWindow{
+  background:black;
+  opacity:0.75;
+  width:100%;
+  color:white;
+  line-height: 2em;
+  position:absolute;
+}
+.console.inactive > .display {
+  /*bottom: calc(-100%);*/
+}
+.console > .display:before{
+  content:'';
+  white-space: pre;
+}
+.console > .display{
+  bottom: 2em;
+  colour: green;
+}
+.console > .entry:before{
+  content:'pazudora ~ $';
+}
+.console > .entry{
+  bottom: 0px;
+}

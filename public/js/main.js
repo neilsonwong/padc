@@ -1,14 +1,20 @@
 var pad = new Pazudora();
 pad.render();
 
-function hiz () {console.log('hi3');}
-var hi = $('<div>', {class:'module', html:'<p>this is a lot of text </p>'});
-var hi2 = $('<div>', {class:'module wood', 
-					click:function(){console.log('hi2');}});
-var hi3 = $('<div>', {class:'module fire', 
-					click:hiz});
 
+function Console (){
+	var $container = $('<div>', {id:'console', class:'console inactive'});
+	var $display = $('<div>', {class:'consoleWindow display', html:"hi"});
+	var $entry = $('<div>', {class:'consoleWindow entry'});
 
-$('body').append(hi);
-$('body').append(hi2);
-$('body').append(hi3);
+	$container.append($display);
+	$container.append($entry);
+	this.$html = $container;
+}
+
+Console.prototype.inputBar = {};
+Console.prototype.$html = {};
+
+var c = new Console();
+
+$('body').append(c.$html);
