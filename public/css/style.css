@@ -17,7 +17,8 @@ td {
   margin: 0px;
 }
 .unselectable,
-#board_editor {
+#board_editor,
+.console > .entry:after {
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -226,6 +227,56 @@ ul.hotkey {
 .speaker {
   float: left;
 }
+/* Console */
+.console {
+  font-family: 'Inconsolata', 'Courier New';
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 2;
+}
+.consoleWindow {
+  background: #000;
+  padding-left: 0.5em;
+  opacity: 0.75;
+  width: 100%;
+  color: #fff;
+  line-height: 2em;
+  float: left;
+}
+.console.inactive > .display {
+  display: none;
+}
+.console > .display:before {
+  content: '';
+  white-space: pre;
+}
+.console > .display {
+  color: Lime;
+  white-space: pre-wrap;
+}
+.console > .entry:before {
+  content: 'pazudora ~ $ ';
+/*margin-left:7px;*/
+}
+.console > .entry {
+  cursor: text;
+}
+.console > .entry:after {
+  animation: blink 1s steps(5, start) infinite;
+  -webkit-animation: blink 1s steps(5, start) infinite;
+  content: 'A';
+  background: #fff;
+}
+.console.inactive > .entry:after {
+  display: none;
+}
+@-webkit-keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
 /* characters */
 .light-metatron {
   background: url("../assets/special/LMeta.png") no-repeat 0px 0px;
@@ -358,37 +409,23 @@ ul.hotkey {
     transform: translateY(-6px);
   }
 }
-.console{
-  position: fixed;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  z-index:2;
+@-moz-keyframes blink {
+  to {
+    visibility: hidden;
+  }
 }
-.console.inactive{
+@-webkit-keyframes blink {
+  to {
+    visibility: hidden;
+  }
 }
-.consoleWindow{
-  background:black;
-  opacity:0.75;
-  width:100%;
-  color:white;
-  line-height: 2em;
-  position:absolute;
+@-o-keyframes blink {
+  to {
+    visibility: hidden;
+  }
 }
-.console.inactive > .display {
-  /*bottom: calc(-100%);*/
-}
-.console > .display:before{
-  content:'';
-  white-space: pre;
-}
-.console > .display{
-  bottom: 2em;
-  colour: green;
-}
-.console > .entry:before{
-  content:'pazudora ~ $';
-}
-.console > .entry{
-  bottom: 0px;
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
 }
