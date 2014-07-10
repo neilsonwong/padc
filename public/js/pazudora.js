@@ -6,6 +6,8 @@ function Pazudora() {
 
 	this.$board = new Board();
 
+	this.console = new Console();
+
 	//add only renderable properties
 	(function pushContent(){
 	    for (key in self) {
@@ -28,6 +30,7 @@ Pazudora.orbSprites = {	0:'fire',
 //vars representing the global state
 Pazudora.prototype.$board = {};
 Pazudora.prototype.$content = [];
+Pazudora.prototype.console = {};
 Pazudora.prototype.baseURL = '';
 
 //methods

@@ -327,7 +327,7 @@ ul.hotkey {
   cursor: text;
 }
 
-.console > .entry:after{
+.console .entry > .blinker{
   animation: blink 1s steps(5, start) infinite;
   -webkit-animation: blink 1s steps(5, start) infinite;
   content:'A';
@@ -335,7 +335,7 @@ ul.hotkey {
   @extend .unselectable;
 }
 
-.console.inactive > .entry:after{
+.console.inactive .entry > .blinker{
   display:none;
 }
 

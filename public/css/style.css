@@ -18,7 +18,7 @@ td {
 }
 .unselectable,
 #board_editor,
-.console > .entry:after {
+.console .entry > .blinker {
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -263,13 +263,13 @@ ul.hotkey {
 .console > .entry {
   cursor: text;
 }
-.console > .entry:after {
+.console .entry > .blinker {
   animation: blink 1s steps(5, start) infinite;
   -webkit-animation: blink 1s steps(5, start) infinite;
   content: 'A';
   background: #fff;
 }
-.console.inactive > .entry:after {
+.console.inactive .entry > .blinker {
   display: none;
 }
 @-webkit-keyframes blink {
